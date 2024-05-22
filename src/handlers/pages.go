@@ -7,5 +7,6 @@ import (
 )
 
 func HandleHomePage(c echo.Context) error {
+
 	return c.Render(http.StatusOK, "home.html", nil)
 }
