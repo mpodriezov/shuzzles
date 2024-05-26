@@ -3,8 +3,8 @@ CREATE TABLE
     item_types (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
-        created_at TIMESTAMP,
-        updated_at TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
 -- Create a table for items
@@ -15,8 +15,8 @@ CREATE TABLE
         title TEXT,
         type_id INTEGER,
         description TEXT,
-        created_at TIMESTAMP,
-        updated_at TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
 -- Create a table for media
@@ -27,9 +27,8 @@ CREATE TABLE
         mime TEXT,
         url TEXT,
         size INTEGER,
-        created_at TIMESTAMP,
-        updated_at TIMESTAMP,
-        FOREIGN KEY (item_id) REFERENCES items (id)
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
 -- Create a table for listings
@@ -41,8 +40,9 @@ CREATE TABLE
         description TEXT,
         altitude REAL,
         longitude REAL,
-        created_at TIMESTAMP,
-        updated_at TIMESTAMP
+        user_pickup_point_id INTEGER,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
 -- Create a table for items in listings
@@ -51,8 +51,8 @@ CREATE TABLE
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         listing_id INTEGER,
         item_id INTEGER,
-        FOREIGN KEY (listing_id) REFERENCES listings (id),
-        FOREIGN KEY (item_id) REFERENCES items (id)
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
 -- Create a table for users
@@ -63,8 +63,17 @@ CREATE TABLE
         email TEXT,
         password_hash TEXT,
         bio TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+CREATE TABLE
+    user_pickup_point (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        name TEXT,
         altitude REAL,
         longitude REAL,
-        created_at TIMESTAMP,
-        updated_at TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );

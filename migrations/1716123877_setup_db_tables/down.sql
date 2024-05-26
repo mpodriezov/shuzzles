@@ -15,3 +15,9 @@ DROP TABLE IF EXISTS item_types;
 
 -- Drop table for users
 DROP TABLE IF EXISTS users;
+
+-- Drop table for sessions
+DROP TABLE IF EXISTS sessions;
+
+-- Drop table user_pickup_point
+DROP TABLE IF EXISTS user_pickup_point;

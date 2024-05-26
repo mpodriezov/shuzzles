@@ -1,6 +1,12 @@
 {{ extends "shared/layout.html" }}
 
 {{ define "content" -}}
-<h2>Home</h2>
-<p>This is the home page.</p>
+
+{{ if .IsAuthenticated }}
+<h1>Welcome, {{ .User.Username }}!</h1>
+{{ else }}
+<h1>Welcome!</h1>
+<p>You are not logged in.</p>
+{{ end }}
+
 {{ end }}
