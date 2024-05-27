@@ -38,7 +38,6 @@ func (t *Renderer) Render(w io.Writer, name string, ctxData any, c echo.Context)
 	} else {
 		data.IsAuthenticated = false
 	}
-	c.Logger().Info(data)
 	return t.templates.ExecuteTemplate(w, name, data)
 }
 

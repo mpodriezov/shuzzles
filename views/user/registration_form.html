@@ -1,24 +1,25 @@
 <form hx-swap="outerHTML" hx-post="/register">
     <div>
         <label for="username">Username</label>
-        <input type="text" id="username" name="username" {{ if .Data.Username }}value="{{ .Data.Username }}" {{ end}}
+        <input type="text" id="username" name="username" {{ if .Context.Data.Username }}value="{{ .Context.Data.Username }}" {{ end}}
             required />
-        {{ if .Errors.username }}<p style="color: red">{{ .Errors.username }}</p>{{ end }}
+        {{ if .Context.Errors.username }}<p style="color: red">{{ .Context.Errors.username }}</p>{{ end }}
+    </div>
     </div>
     <div>
         <label for="email">Email</label>
-        <input type="email" id="email" name="email" {{ if .Data.Email }}value="{{ .Data.Email }}" {{ end}} required />
-        {{ if .Errors.email }}<p style="color: red">{{ .Errors.email }}</p>{{ end }}
+        <input type="email" id="email" name="email" {{ if .Context.Data.Email }}value="{{ .Context.Data.Email }}" {{ end}} required />
+        {{ if .Context.Errors.email }}<p style="color: red">{{ .Context.Errors.email }}</p>{{ end }}
     </div>
     <div>
         <label for="password">Password</label>
         <input type="password" id="password" name="password" required>
-        {{ if .Errors.password }}<p style="color: red">{{ .Errors.password }}</p>{{ end }}
+        {{ if .Context.Errors.password }}<p style="color: red">{{ .Context.Errors.password }}</p>{{ end }}
     </div>
     <div>
         <label for="confirm_password">Confirm Password</label>
         <input type="password" id="confirm_password" name="confirm_password" required>
-        {{ if .Errors.confirm_password }}<p style="color: red">{{ .Errors.confirm_password }}</p>{{ end }}
+        {{ if .Context.Errors.confirm_password }}<p style="color: red">{{ .Context.Errors.confirm_password }}</p>{{ end }}
     </div>
     <div>
         <button type="submit">Register</button>

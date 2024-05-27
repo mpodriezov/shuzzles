@@ -23,13 +23,13 @@ type UserRegistrationPage struct {
 	Errors map[string]string
 }
 
-func NewUserRegistrationPage(username, email, password, passwordConfirm string) *UserRegistrationPage {
+func NewUserRegistrationPage(c echo.Context) *UserRegistrationPage {
 	return &UserRegistrationPage{
 		Data: UserRegistraionData{
-			Username:        username,
-			Email:           email,
-			password:        password,
-			passwordConfirm: passwordConfirm,
+			Username:        c.FormValue("username"),
+			Email:           c.FormValue("email"),
+			password:        c.FormValue("password"),
+			passwordConfirm: c.FormValue("confirm_password"),
 		},
 		Errors: nil,
 	}
@@ -58,18 +58,13 @@ func (p *UserRegistrationPage) Validate() bool {
 
 // handler for [GET] /register
 func HandleShowUserRegistration(c echo.Context) error {
-	return c.Render(http.StatusOK, "user/register.html", nil)
+	return c.Render(http.StatusOK, "user/register.html", NewUserRegistrationPage(c))
 }
 
 // handler for [POST] /register
 func HandleNewUserRegistration(c echo.Context) error {
 
-	username := c.FormValue("username")
-	email := c.FormValue("email")
-	password := c.FormValue("password")
-	passwordConfirm := c.FormValue("confirm_password")
-
-	page := NewUserRegistrationPage(username, email, password, passwordConfirm)
+	page := NewUserRegistrationPage(c)
 
 	if !page.Validate() {
 		// return 422 Unprocessable Entity along with the page to show the errors
@@ -78,17 +73,17 @@ func HandleNewUserRegistration(c echo.Context) error {
 
 	dal := c.Get("dal").(*data.Dal)
 
-	passwordhash, _ := utils.Hash(password)
+	passwordhash, _ := utils.Hash(page.Data.password)
 
 	usr := data.RegistrationModel{
-		Username:     username,
-		Email:        email,
+		Username:     page.Data.Username,
+		Email:        page.Data.Email,
 		PasswordHash: passwordhash,
 		CreatedAt:    time.Now().UTC(),
 		UpdatedAt:    time.Now().UTC(),
 	}
 
-	c.Logger().Debug("New user registration data: ", usr)
+	c.Logger().Debug("new user registration data: ", usr)
 
 	exists := dal.UserExists(usr.Username, usr.Email)
 
@@ -99,9 +94,10 @@ func HandleNewUserRegistration(c echo.Context) error {
 
 	userId := dal.NewUser(&usr)
 
-	c.Logger().Info("New user created with id: ", userId)
+	c.Logger().Info("new user created with id: ", userId)
 
-	return c.Redirect(http.StatusSeeOther, "/register/success")
+	c.Response().Header().Set("HX-Redirect", "/register/success")
+	return c.NoContent(http.StatusFound)
 }
 
 // handler for [GET] register/success
