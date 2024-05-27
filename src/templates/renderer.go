@@ -17,24 +17,26 @@ type Renderer struct {
 type TemplateData struct {
 	IsAuthenticated bool
 	User            any
-	Ctx             any
+	Context         any
 }
 
 func NewTemplateData() TemplateData {
 	return TemplateData{
 		IsAuthenticated: false,
 		User:            data.SessionUser{},
-		Ctx:             nil,
+		Context:         nil,
 	}
 }
 
 func (t *Renderer) Render(w io.Writer, name string, ctxData any, c echo.Context) error {
 	data := NewTemplateData()
-	data.Ctx = ctxData
+	data.Context = ctxData
 	user := c.Get("user")
 	if user != nil {
 		data.User = user
 		data.IsAuthenticated = true
+	} else {
+		data.IsAuthenticated = false
 	}
 	c.Logger().Info(data)
 	return t.templates.ExecuteTemplate(w, name, data)

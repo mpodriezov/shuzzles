@@ -4,8 +4,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gorilla/sessions"
-	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
@@ -26,7 +24,6 @@ func main() {
 	e.Renderer = templates.CreateRenderer()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
 
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -45,6 +42,7 @@ func main() {
 				user := dal.FindUserBySession(cookie.Value)
 				if user != nil {
 					c.Set("user", user)
+					c.Set("isAuthenticated", true)
 				}
 			}
 			return next(c)
@@ -53,6 +51,7 @@ func main() {
 
 	e.Static("/static", "public")
 	e.GET("/", handlers.HandleHomePage)
+	e.GET("/logout", handlers.HandleUserLogout)
 	e.GET("/login", handlers.HandleShowUserLogin)
 	e.POST("/login", handlers.HandleUserLogin)
 	e.GET("/register", handlers.HandleShowUserRegistration)
@@ -60,7 +59,7 @@ func main() {
 	e.GET("/register/success", handlers.HandlerShowRegistrationSucccess)
 	e.GET("/protected", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "home.html", nil)
-	})
+	}, IsAuthenticated)
 
 	port := os.Getenv("PORT")
 
@@ -70,12 +69,10 @@ func main() {
 
 func IsAuthenticated(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		sess, _ := session.Get("session", c)
-		user, ok := sess.Values["user"].(data.SessionUser)
+		_, ok := c.Get("isAuthenticated").(bool)
 		if !ok {
 			return c.Redirect(http.StatusSeeOther, "/login")
 		}
-		c.Set("user", user)
 		return next(c)
 	}
 }

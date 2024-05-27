@@ -3,7 +3,11 @@
     <nav>
         <a href="/">Home</a> |
         <a href="/search">Catalog</a> |
+        {{ if .IsAuthenticated }}
+        <a href="/logout">Logout</a>
+        {{ else }}
         <a href="/register">Register</a> |
-        <a href="/login">Register</a>
+        <a href="/login">Login</a>
+        {{ end }}
     </nav>
 </header>

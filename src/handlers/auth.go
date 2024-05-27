@@ -2,14 +2,11 @@ package handlers
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/mpodriezov/shuzzles/src/data"
 	"github.com/mpodriezov/shuzzles/src/utils"
 )
-
-const SESSION_TIME_HOURS = 24
 
 type UserLoginData struct {
 	Username string
@@ -32,7 +29,7 @@ func NewUserLoginPage(username, password string) *UserLoginPage {
 }
 
 func HandleShowUserLogin(c echo.Context) error {
-	return c.Render(http.StatusOK, "user/login.html", nil)
+	return c.Render(http.StatusOK, "user/login.html", NewUserLoginPage("", ""))
 }
 
 func HandleUserLogin(c echo.Context) error {
@@ -73,23 +70,29 @@ func HandleUserLogin(c echo.Context) error {
 		return c.Render(http.StatusUnprocessableEntity, "user/login_form.html", page)
 	}
 
-	expiresAt := time.Now().Add(time.Duration(SESSION_TIME_HOURS) * time.Hour)
+	expiresAt, err := utils.GetSessionTimeOutTime()
+	if err != nil {
+		c.Logger().Error(err)
+		page.Errors["error"] = "Unknown error occurred. Please try again later."
+		return c.Render(http.StatusUnprocessableEntity, "user/login_form.html", page)
+	}
 
 	//create session in db
 	session := dal.CreateSession(sessionID, user.Id, expiresAt)
 	// create session cookie
 	utils.CreateSessionCookie(c, session.SessionId, expiresAt)
 
-	return c.Redirect(http.StatusSeeOther, "/")
+	c.Response().Header().Set("HX-Redirect", "/")
+	return c.NoContent(http.StatusFound)
 }
 
 func HandleUserLogout(c echo.Context) error {
 	sessionCookie, err := c.Cookie("sid")
 	if err != nil {
-		return c.Redirect(http.StatusSeeOther, "/")
+		return c.Redirect(http.StatusFound, "/")
 	}
 	dal := c.Get("dal").(*data.Dal)
 	dal.DeleteSession(sessionCookie.Value)
 	utils.DeleteSessionCookie(c)
-	return c.Redirect(http.StatusSeeOther, "/login")
+	return c.Redirect(http.StatusFound, "/")
 }

@@ -1,15 +1,15 @@
 <form hx-post="/login" hx-swap="outerHTML">
+    <p>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" {{ if .Context.Data.Username }}value="{{ .Context.Data.Username }}"{{end}}
+            required>
+    </p>
+    <p>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>    
+    </p>
 
-    <h2>Login</h2>
-
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" {{ if .Ctx.Data.Username }}value="{{ .Ctx.Data.Username }}" {{ end}}
-        required>
-
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
-
-    {{ if .Ctx.Errors.error }}<p style="color: red">{{ .Ctx.Errors.error }}</p>{{ end }}
+    {{ if .Context.Errors.error }}<p style="color: red">{{ .Context.Errors.error }}</p>{{ end }}
 
     <button type="submit">Login</button>
 </form>
