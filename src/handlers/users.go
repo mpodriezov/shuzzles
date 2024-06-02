@@ -140,5 +140,6 @@ func HandlerUserAdminUpdate(c echo.Context) error {
 
 	dal.UpdateUser(usr.Id, usr.Username, usr.Email, usr.Bio, usr.Role)
 
-	return c.Redirect(http.StatusSeeOther, "/admin/user")
+	c.Response().Header().Set("HX-Redirect", "/admin/user")
+	return c.NoContent(http.StatusFound)
 }
