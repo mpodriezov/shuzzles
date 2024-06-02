@@ -12,7 +12,7 @@ type SessionUser struct {
 
 type SessionModel struct {
 	SessionId string
-	UserId    int64
+	UserId    uint64
 	ExpiresOn time.Time
 }
 
@@ -39,7 +39,7 @@ func (d *Dal) DeleteSession(sessionId string) {
 	}
 }
 
-func (d *Dal) CreateSession(sessionId string, userId int64, expiresAt time.Time) *SessionModel {
+func (d *Dal) CreateSession(sessionId string, userId uint64, expiresAt time.Time) *SessionModel {
 	sql := `INSERT INTO sessions (session_id, user_id, expires_on) VALUES (?, ?, ?);`
 	_, err := d.DB.Exec(sql, sessionId, userId, expiresAt)
 	if err != nil {

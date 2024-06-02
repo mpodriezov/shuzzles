@@ -1,0 +1,34 @@
+{{ extends "shared/layout.html" }}
+
+{{ define "content" -}}
+
+<h2>Users</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Created</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{ range .Context.Users }}
+        <tr>
+            <td>{{ .Id }}</td>
+            <td>{{ .Username }}</td>
+            <td>{{ .Email }}</td>
+            <td>{{ .Role }}</td>
+            <td>{{ .CreatedAt }}</td>
+            <td>
+                <a href="/admin/user/{{ .Id }}">Edit</a>
+                <a href="/admin/user/{{ .Id }}/delete">Delete</a>
+            </td>
+        </tr>
+        {{ end }}
+    </tbody>
+</table>
+{{end}}

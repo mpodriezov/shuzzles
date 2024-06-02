@@ -1,0 +1,16 @@
+{{ extends "shared/layout.html" }}
+
+{{ define "content" -}}
+<h2>My listings</h2>
+
+{{ if .Context.Items }}
+<ul>
+    {{ range .Context.Items }}
+    {{ template "items/listing_item.html" . }}
+    {{ end }}
+</ul>
+{{ else }}
+<p>No items found.</p>
+{{ end }}
+
+{{end}}

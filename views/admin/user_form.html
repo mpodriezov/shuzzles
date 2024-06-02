@@ -1,0 +1,36 @@
+<form hx-swap="outerHTML" hx-post="/admin/user/{{ .Context.User.Id }}">
+    <div>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" {{ if .Context.User.Username
+            }}value="{{ .Context.User.Username }}" {{ end}} required />
+        {{ if .Context.Errors.username }}<p style="color: red">{{ .Context.Errors.username }}</p>{{ end }}
+    </div>
+    <div>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" {{ if .Context.User.Email }}value="{{ .Context.User.Email }}"
+            {{end}} required />
+        {{ if .Context.Errors.email }}<p style="color: red">{{ .Context.Errors.email }}</p>{{ end }}
+    </div>
+    <div>
+        <label for="bio">Bio</label>
+        <textarea name="bio">{{ if .Context.User.Bio }}{{ .Context.User.Bio }}{{ end}}</textarea>
+    </div>
+    <div>
+        <div>
+            <label>Roles</label>
+            <div>
+                <input type="checkbox" id="role-user" name="role" value="2" 
+                {{ if .Context.UserRoles.admin }} checked{{ end }} />
+                <label for="role-user">Admin</label>
+            </div>
+            <div>
+                <input type="checkbox" id="role-admin" name="role" value="4" 
+                {{ if .Context.UserRoles.user }} checked{{ end }} />
+                <label for="role-user">User</label>
+            </div>
+        </div>
+    </div>
+    <div>
+        <button type="submit">Update</button>
+    </div>
+</form>

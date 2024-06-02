@@ -11,6 +11,9 @@ import (
 
 const MAX_PASSWORD_LENGTH = 8
 
+const RoleAdmin = 2
+const RoleUser = 4
+
 type UserRegistraionData struct {
 	Username        string
 	Email           string
@@ -50,9 +53,9 @@ func (p *UserRegistrationPage) Validate() bool {
 		p.Errors["password"] = "Passwords do not match"
 	}
 
-	// if !utils.IsPasswordComplex(p.Data.password, MAX_PASSWORD_LENGTH, true, true, true, true) {
-	// 	p.Errors["password"] = "Password should contain at least one uppercase letter and one lowercase letter"
-	// }
+	if !utils.IsPasswordComplex(p.Data.password, MAX_PASSWORD_LENGTH, true, true, true, true) {
+		p.Errors["password"] = "Password should contain at least one uppercase letter and one lowercase letter"
+	}
 	return len(p.Errors) == 0
 }
 
@@ -79,6 +82,8 @@ func HandleNewUserRegistration(c echo.Context) error {
 		Username:     page.Data.Username,
 		Email:        page.Data.Email,
 		PasswordHash: passwordhash,
+		Bio:          "",
+		Role:         RoleUser,
 		CreatedAt:    time.Now().UTC(),
 		UpdatedAt:    time.Now().UTC(),
 	}

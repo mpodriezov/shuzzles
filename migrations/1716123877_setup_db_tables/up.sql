@@ -38,8 +38,6 @@ CREATE TABLE
         user_id INTEGER,
         title TEXT,
         description TEXT,
-        altitude REAL,
-        longitude REAL,
         user_pickup_point_id INTEGER,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

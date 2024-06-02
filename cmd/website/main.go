@@ -57,9 +57,12 @@ func main() {
 	e.GET("/register", handlers.HandleShowUserRegistration)
 	e.POST("/register", handlers.HandleNewUserRegistration)
 	e.GET("/register/success", handlers.HandlerShowRegistrationSucccess)
-	e.GET("/protected", func(c echo.Context) error {
-		return c.Render(http.StatusOK, "home.html", nil)
-	}, IsAuthenticated)
+	e.POST("/user/:userId/listing", handlers.HandleCreatingNewListing, IsAuthenticated)
+	e.GET("/user/:userId/listing", handlers.HandleShowUserListings, IsAuthenticated)
+
+	e.GET("/admin/user", handlers.HandleShowUsersAdminView, IsAuthenticated)
+	e.GET("/admin/user/:userId", handlers.HandleShowUserAdminView, IsAuthenticated)
+	e.POST("/admin/user/:userId", handlers.HandlerUserAdminUpdate, IsAuthenticated)
 
 	port := os.Getenv("PORT")
 

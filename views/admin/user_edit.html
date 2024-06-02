@@ -1,0 +1,6 @@
+{{ extends "shared/layout.html" }}
+
+{{ define "content" -}}
+    <h2>User {{.Context.User.Username }}</h2>
+    {{ template "admin/user_form.html" .}}
+{{end}}
