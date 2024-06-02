@@ -8,6 +8,7 @@ type SessionUser struct {
 	Email     string
 	SessionId string
 	ExpiresOn time.Time
+	Role      byte
 }
 
 type SessionModel struct {
@@ -17,10 +18,10 @@ type SessionModel struct {
 }
 
 func (d *Dal) FindUserBySession(sessionId string) *SessionUser {
-	sql := `SELECT u.id, u.username, u.email, s.session_id, s.expires_on FROM users u JOIN sessions s ON u.id = s.user_id WHERE s.session_id = ?;`
+	sql := `SELECT u.id, u.username, u.email, u.role, s.session_id, s.expires_on FROM users u JOIN sessions s ON u.id = s.user_id WHERE s.session_id = ?;`
 	row := d.DB.QueryRow(sql, sessionId)
 	u := SessionUser{}
-	err := row.Scan(&u.Id, &u.Username, &u.Email, &u.SessionId, &u.ExpiresOn)
+	err := row.Scan(&u.Id, &u.Username, &u.Email, &u.Role, &u.SessionId, &u.ExpiresOn)
 	if err != nil {
 		return nil
 	}

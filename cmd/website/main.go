@@ -52,25 +52,42 @@ func main() {
 	e.Static("/static", "public")
 	e.GET("/", handlers.HandleHomePage)
 	e.GET("/404", handlers.HandleNotFound)
+
+	// login, register routes
 	e.GET("/logout", handlers.HandleUserLogout)
 	e.GET("/login", handlers.HandleShowUserLogin)
 	e.POST("/login", handlers.HandleUserLogin)
 	e.GET("/register", handlers.HandleShowUserRegistration)
 	e.POST("/register", handlers.HandleNewUserRegistration)
 	e.GET("/register/success", handlers.HandlerShowRegistrationSucccess)
+
 	e.POST("/user/:userId/listing", handlers.HandleCreatingNewListing, IsAuthenticated)
 	e.GET("/user/:userId/listing", handlers.HandleShowUserListings, IsAuthenticated)
 
-	e.GET("/admin/user", handlers.HandleShowUsersAdminView, IsAuthenticated)
-	e.GET("/admin/user/:userId", handlers.HandleShowUserAdminView, IsAuthenticated)
-	e.POST("/admin/user/:userId", handlers.HandlerUserAdminUpdate, IsAuthenticated)
-	e.GET("/admin/user/:userId/delete", handlers.HandleAdminDeleteUserShow, IsAuthenticated)
-	e.DELETE("/admin/user/:userId", handlers.HandleAdminDeleteUser, IsAuthenticated)
+	// admin routes
+	e.GET("/admin/user", handlers.HandleShowUsersAdminView, IsAuthenticated, HasRole(data.Role_Admin))
+	e.GET("/admin/user/:userId", handlers.HandleShowUserAdminView, IsAuthenticated, HasRole(data.Role_Admin))
+	e.POST("/admin/user/:userId", handlers.HandlerUserAdminUpdate, IsAuthenticated, HasRole(data.Role_Admin))
+	e.GET("/admin/user/:userId/delete", handlers.HandleAdminDeleteUserShow, IsAuthenticated, HasRole(data.Role_Admin))
+	e.DELETE("/admin/user/:userId", handlers.HandleAdminDeleteUser, IsAuthenticated, HasRole(data.Role_Admin))
 
 	port := os.Getenv("PORT")
 
 	e.Logger.SetLevel(log.DEBUG)
 	e.Logger.Fatal(e.Start(port))
+}
+
+func HasRole(role byte) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			user, ok := c.Get("user").(*data.SessionUser)
+			if !ok || user.Role&role == 0 {
+				c.Response().Header().Set("HX-Redirect", "/login")
+				return c.Redirect(http.StatusSeeOther, "/login")
+			}
+			return next(c)
+		}
+	}
 }
 
 func IsAuthenticated(next echo.HandlerFunc) echo.HandlerFunc {
