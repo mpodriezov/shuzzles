@@ -30,12 +30,15 @@ type UserModel struct {
 }
 
 func (d *Dal) GetUserById(id uint64) *UserModel {
-	sql := `SELECT id, username, email, bio, created_at, updated_at, password_hash, role FROM users WHERE id = ?;`
-	row := d.DB.QueryRow(sql, id)
+	sqlStr := `SELECT id, username, email, bio, created_at, updated_at, password_hash, role FROM users WHERE id = ?;`
+	row := d.DB.QueryRow(sqlStr, id)
 	u := UserModel{}
 	err := row.Scan(&u.Id, &u.Username, &u.Email, &u.Bio, &u.CreatedAt, &u.UpdatedAt, &u.PasswordHash, &u.Role)
 	if err != nil {
-		panic(err)
+		if err == sql.ErrNoRows {
+			return nil // No rows returned
+		}
+		return nil // Other error occurred
 	}
 	return &u
 }
@@ -128,4 +131,12 @@ func (d *Dal) DoesUserExistWithUsername(username string) bool {
 		panic(err)
 	}
 	return count > 0
+}
+
+func (d *Dal) DeleteUser(userId uint64) {
+	sqlStr := `DELETE FROM users WHERE id = ?;`
+	_, err := d.DB.Exec(sqlStr, userId)
+	if err != nil {
+		panic(err)
+	}
 }

@@ -143,3 +143,40 @@ func HandlerUserAdminUpdate(c echo.Context) error {
 	c.Response().Header().Set("HX-Redirect", "/admin/user")
 	return c.NoContent(http.StatusFound)
 }
+
+func HandleAdminDeleteUserShow(c echo.Context) error {
+
+	userIdStr := c.Param("userId")
+	userId, err := strconv.ParseUint(userIdStr, 10, 64)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "Invalid user ID")
+	}
+	dal := c.Get("dal").(*data.Dal)
+	user := dal.GetUserById(userId)
+
+	if user == nil {
+		return c.Render(http.StatusNotFound, "404.html", nil)
+	}
+
+	return c.Render(http.StatusOK, "admin/user_delete.html", user)
+}
+
+func HandleAdminDeleteUser(c echo.Context) error {
+	dal := c.Get("dal").(*data.Dal)
+	userIdStr := c.Param("userId")
+	userId, err := strconv.ParseUint(userIdStr, 10, 64)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "Invalid user ID")
+	}
+	user := dal.GetUserById(userId)
+
+	if user == nil {
+		c.Response().Header().Set("HX-Redirect", "/404")
+		return c.NoContent(http.StatusNotFound)
+	}
+
+	dal.DeleteUser(userId)
+
+	c.Response().Header().Set("HX-Redirect", "/admin/user")
+	return c.NoContent(http.StatusFound)
+}

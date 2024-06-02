@@ -10,3 +10,7 @@ func HandleHomePage(c echo.Context) error {
 
 	return c.Render(http.StatusOK, "home.html", nil)
 }
+
+func HandleNotFound(c echo.Context) error {
+	return c.Render(http.StatusNotFound, "404.html", nil)
+}

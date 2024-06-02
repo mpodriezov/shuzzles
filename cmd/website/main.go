@@ -51,6 +51,7 @@ func main() {
 
 	e.Static("/static", "public")
 	e.GET("/", handlers.HandleHomePage)
+	e.GET("/404", handlers.HandleNotFound)
 	e.GET("/logout", handlers.HandleUserLogout)
 	e.GET("/login", handlers.HandleShowUserLogin)
 	e.POST("/login", handlers.HandleUserLogin)
@@ -63,6 +64,8 @@ func main() {
 	e.GET("/admin/user", handlers.HandleShowUsersAdminView, IsAuthenticated)
 	e.GET("/admin/user/:userId", handlers.HandleShowUserAdminView, IsAuthenticated)
 	e.POST("/admin/user/:userId", handlers.HandlerUserAdminUpdate, IsAuthenticated)
+	e.GET("/admin/user/:userId/delete", handlers.HandleAdminDeleteUserShow, IsAuthenticated)
+	e.DELETE("/admin/user/:userId", handlers.HandleAdminDeleteUser, IsAuthenticated)
 
 	port := os.Getenv("PORT")
 

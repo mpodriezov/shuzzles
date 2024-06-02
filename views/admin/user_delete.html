@@ -1,0 +1,9 @@
+{{ extends "shared/layout.html" }}
+
+{{ define "content" -}}
+<h2>Delete User</h2>
+<form hx-swap="outerHTML" hx-delete="/admin/user/{{ .Context.Id }}">
+    <p>Are you sure you want to delete user {{.Context.Username}}?</p>
+    <input type="submit" value="Delete">
+</form>
+{{end}}
